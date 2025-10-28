@@ -1,0 +1,21 @@
+{
+  "name": "deepbits-cyber-assistant",
+  "version": "1.0.0",
+  "description": "Local cyber security assistant for PC issue detection, malware analysis, and system scanning",
+  "author": {
+    "name": "Deepbits Technology Inc.",
+    "email": "support@deepbits.com",
+    "url": "https://deepbits.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "security",
+    "malware-analysis",
+    "system-scan",
+    "registry",
+    "browser-hijacking",
+    "binary-analysis",
+    "cyber-security"
+  ],
+  "mcpServers": "./.mcp.json"
+}

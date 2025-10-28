@@ -1,0 +1,13 @@
+{
+    "name": "deepbits",
+    "owner": {
+        "name": "Deepbits Technology Inc."
+    },
+    "plugins": [
+        {
+            "name": "deepbits-cyber-assistant",
+            "source": "./drbinary-chat-plugin",
+            "description": "Local cyber security assistant for PC issue detection, malware analysis, and system scanning"
+        }
+    ]
+}
