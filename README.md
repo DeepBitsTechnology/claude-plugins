@@ -285,7 +285,7 @@ All scans generate structured reports with:
 - **Name**: deepbits-cyber-assistant
 - **Version**: 1.0.0
 - **Author**: Deepbits Technology Inc.
-- **License**: MIT
+- **License**: Apache 2.0
 
 ### Contributing
 For issues, feature requests, or contributions, contact Deepbits Technology Inc.
