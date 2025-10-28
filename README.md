@@ -1,16 +1,40 @@
 # Deepbits Cyber Assistant Plugin for Claude Code
 
-A comprehensive Claude Code plugin for local system security analysis, malware detection, and binary analysis developed by Deepbits Technology Inc.
+The Plugin equips Claude Code with advanced binary analysis capabilities for tasks such as incident response, malware investigation, and vulnerability assessment. It connects to both cloud-based analysis platforms and local tools via MCP, enabling seamless hybrid workflows. With features including local Windows system scanning, browser hijacking detection, registry and network monitoring, suspicious file analysis, and remote binary analysis through tools like Ghidra, Qilin, and angr, the plugin transforms Claude Code into a powerful AI-assisted workspace for comprehensive system and binary security analysis.
 
 ## Overview
 
-This plugin provides Claude Code with specialized cyber security capabilities including:
-- Local Windows system scanning for malware and security issues
-- Browser hijacking detection
-- Windows Registry analysis
-- Suspicious file detection
-- Network connection monitoring
-- Remote binary file analysis via Ghidra tools
+The Claude Code Security Analysis Plugin extends Claude Code with advanced cybersecurity and binary-analysis capabilities, enabling developers and analysts to perform in-depth system investigations directly within their coding environment.
+
+This plugin seamlessly integrates with both cloud-based analysis platforms and local security tools via the Model Context Protocol (MCP), creating a unified workspace for intelligent, AI-assisted security analysis.
+
+Designed for incident response, malware forensics, and vulnerability research, the plugin empowers users to:
+
+- 🧩 Investigate compromised systems to identify indicators of compromise (IoCs) and attack traces.
+
+- 🦠 Analyze malware samples to uncover behaviors, persistence methods, and payloads.
+
+- 🛡️ Perform vulnerability and exploit analysis, including binary diffing, patch validation, and code comparison.
+
+- ⚙️ Combine cloud automation with local expertise, integrating Deepbits’ agentic binary-analysis capabilities into Claude Code.
+
+Specialized Cybersecurity Capabilities
+
+This plugin provides Claude Code with specialized cybersecurity features, including:
+
+- 💻 Local Windows system scanning for malware, configuration weaknesses, and security issues.
+
+- 🌐 Browser hijacking detection to identify malicious extensions or modified settings.
+
+- 🧮 Windows Registry analysis to reveal persistence mechanisms or misconfigurations.
+
+- 🧾 Suspicious file detection through behavioral and signature-based analysis.
+
+- 🔗 Network connection monitoring for unusual or unauthorized communications.
+
+- 🧠 Remote binary file analysis powered by Ghidra, Qilin, angr, and other advanced analysis frameworks.
+
+Together, these capabilities transform Claude Code into a comprehensive cybersecurity co-pilot—bridging the gap between code intelligence, system defense, and binary analysis.
 
 ## Features
 
@@ -23,7 +47,7 @@ This plugin provides Claude Code with specialized cyber security capabilities in
 
 ### 🔍 Binary Analysis
 - Upload suspicious files to remote sandbox
-- Ghidra-powered static analysis
+- Advanced static and dynamic analysis
 - Malware classification and threat assessment
 - Indicator of Compromise (IoC) extraction
 - Detailed decompilation and code analysis
