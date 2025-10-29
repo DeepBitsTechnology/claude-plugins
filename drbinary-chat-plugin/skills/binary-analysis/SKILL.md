@@ -1,11 +1,11 @@
 ---
 name: binary-analysis
-description: Analyze suspicious binary files (exe, dll, sys) using remote Ghidra tools and sandbox environment. Upload files to remote server for decompilation, string extraction, malware detection, and threat assessment. Use when investigating suspicious executables, performing malware analysis, or checking unknown binaries for security threats.
+description: Analyze binary files (exe, dll, sys, bin, ocx, scr, cpl, drv) to assess if they are malicious, perform decompilation, extract strings/imports/exports, detect malware, and provide threat assessment. Use this skill when user asks to analyze, examine, check, or assess any binary file, asks if a file is malicious/suspicious/safe, or provides a file path to a binary. Trigger for phrases like "Is [file] malicious?", "Analyze [file]", "What does [binary] do?", or any request involving binary file analysis.
 ---
 
 # Binary Analysis
 
-This skill enables deep analysis of suspicious binary files using remote Ghidra tools and sandbox environments.
+This skill enables deep analysis of suspicious binary files using remote Ghidra tools and sandbox environments. You HAVE TO upload binary files to the remote first before calling any Ghidra or sandbox tools.
 
 ## When to Use This Skill
 
@@ -21,9 +21,7 @@ Use this skill when you need to:
 ## Workflow
 
 ### Step 1: Obtain Access Token
-```
-Use the workspace_get_access_token MCP tool to get authorization credentials
-```
+Use the `workspace_get_access_token` MCP tool to get authorization credentials
 
 ### Step 2: Upload Binary File
 Execute the following command to upload the suspicious file:
