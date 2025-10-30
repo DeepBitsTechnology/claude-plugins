@@ -64,17 +64,30 @@ The **Cyber Security Analyst** agent provides expert-level security analysis wit
 1. Clone or download this plugin to your local machine
 2. Run claude code
 3. Add marketplace:
-   ```bash
+   ```
    /plugin marketplace add DeepBitsTechnology/claude-plugins
    ```
 4. Install the plugin:
-   ```bash
+   ```
    /plugin install drbinary-chat-plugin@DeepBitsTechnology
    ```
 5. Connect MCP server:
-   ```bash
+   ```
    /mcp
    ```
+
+### Important Configuration
+
+#### MCP Timeout Setting
+
+Binary analysis using disassemblers like Ghidra can take a significant amount of time to complete, especially for large or complex binaries. If you encounter MCP timeout issues during analysis, you should increase the `MCP_TOOL_TIMEOUT` environment variable.
+
+**Recommended setting:**
+```bash
+export MCP_TOOL_TIMEOUT=600000
+```
+
+This sets the timeout to 600,000 milliseconds (10 minutes), which provides sufficient time for the disassembler to analyze binary files thoroughly. You can adjust this value based on your needs, but it's recommended to use a larger value to avoid interruptions during deep analysis.
 
 ## Plugin Structure
 
