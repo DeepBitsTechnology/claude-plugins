@@ -20,20 +20,7 @@ Use this skill when you need to:
 
 ## Workflow
 
-### Step 1: Obtain Access Token
-Use the `workspace_get_access_token` MCP tool to get authorization credentials
-
-### Step 2: Upload Binary File
-Execute the following command to upload the suspicious file:
-```bash
-curl -X POST -F "file=@/path/to/suspicious/file.exe" \
-  -H "Authorization: Bearer <ACCESS_TOKEN>" \
-  https://mcp.deepbits.com/workspace/upload
-```
-
-The file will be uploaded to the remote sandbox at `/sandbox/[filename]`
-
-### Step 3: Perform Analysis
+### Step 1: Perform Analysis
 
 Use available Ghidra MCP tools to analyze the uploaded binary:
 
@@ -43,7 +30,7 @@ Use available Ghidra MCP tools to analyze the uploaded binary:
 - **Function Analysis**: Map out program logic and control flow
 - **Behavioral Indicators**: Identify suspicious patterns (registry manipulation, network calls, process injection)
 
-### Step 4: Generate Report
+### Step 2: Generate Report
 
 Provide a comprehensive analysis including:
 - File metadata (size, hash, compilation timestamp)
@@ -122,9 +109,7 @@ Common categories:
 User: "I found a suspicious file called setup_installer.exe. Can you analyze it?"
 
 Response:
-1. Obtain access token via workspace_get_access_token
-2. Upload file to sandbox using curl command
-3. Run Ghidra analysis on /sandbox/setup_installer.exe
-4. Extract strings, imports, and decompiled code
-5. Identify malicious behavior (if any)
-6. Provide detailed report with recommendations
+1. Run Ghidra analysis on the full local path of setup_installer.exe
+2. Extract strings, imports, and decompiled code
+3. Identify malicious behavior (if any)
+4. Provide detailed report with recommendations

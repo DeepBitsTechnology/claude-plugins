@@ -62,21 +62,36 @@ The **Cyber Security Analyst** agent provides expert-level security analysis wit
 ## Installation
 
 1. Clone or download this plugin to your local machine
-2. Run claude code
-3. Add marketplace:
+2. **Start the MCP server** (required before running Claude Code):
+   ```bash
+   npx -y @drbinary/claude-mcp-server
+   ```
+   **Note:** The MCP server must be running before you start Claude Code. Keep this terminal open.
+3. Run claude code (in a new terminal)
+4. Add marketplace:
    ```
    /plugin marketplace add DeepBitsTechnology/claude-plugins
    ```
-4. Install the plugin:
+5. Install the plugin:
    ```
    /plugin install drbinary-chat-plugin@DeepBitsTechnology
    ```
-5. Connect MCP server:
+6. Connect MCP server:
    ```
    /mcp
    ```
 
 ### Important Configuration
+
+#### MCP Server Startup
+
+**The MCP server will NOT start automatically.** You must manually run the following command before starting Claude Code:
+
+```bash
+npx -y @drbinary/claude-mcp-server
+```
+
+Keep this terminal open while using the plugin, as Claude Code requires the MCP server to be running for binary analysis features.
 
 #### MCP Timeout Setting
 
@@ -203,9 +218,6 @@ When you need to analyze a suspicious file:
    ```
 
 2. **The plugin will:**
-   - Get access token via `workspace_get_access_token` MCP tool
-   - Upload file using curl to https://mcp.deepbits.com/workspace/upload
-   - File is saved to `/sandbox/[filename]` on remote server
    - Perform Ghidra analysis (decompilation, string extraction, etc.)
    - Generate comprehensive threat report
 
@@ -234,7 +246,6 @@ The plugin connects to the Deepbits MCP server for remote analysis:
 ```
 
 ### Available MCP Tools
-- `workspace_get_access_token` - Obtain authorization token
 - Ghidra analysis tools (via remote sandbox)
 - Binary decompilation services
 - Malware analysis capabilities

@@ -12,20 +12,8 @@ Analyze a suspicious binary file using the remote MCP server's Ghidra analysis t
 Provide the full path to the suspicious file you want to analyze.
 
 ## Analysis Process
-
-### Step 1: Get Access Token
-Use the `workspace_get_access_token` MCP tool to obtain authorization credentials.
-
-### Step 2: Upload Binary
-Upload the file to the remote sandbox environment:
-```bash
-curl -X POST -F "file=@/path/to/suspicious/file.exe" \
-  -H "Authorization: Bearer <ACCESS_TOKEN>" \
-  https://mcp.deepbits.com/workspace/upload
-```
-
-### Step 3: Ghidra Analysis
-Once uploaded to `/sandbox/[filename]`, perform:
+### Step 1: Ghidra Analysis
+Perform:
 
 1. **Basic File Information**
    - File size and type
@@ -53,7 +41,7 @@ Once uploaded to `/sandbox/[filename]`, perform:
    - Packing/encryption
    - Suspicious behavior patterns
 
-### Step 4: Generate Report
+### Step 2: Generate Report
 Provide comprehensive findings with:
 - File metadata
 - Capabilities identified

@@ -33,20 +33,12 @@ Use Claude Code's file tools to:
 ### 4. Binary File Analysis
 When you need to analyze a suspicious binary file:
 
-1. **Obtain Access Token**: Use the `workspace_get_access_token` MCP tool to get authorization
-2. **Upload File**: Execute this bash command:
-   ```bash
-   curl -X POST -F "file=@/path/to/suspicious/file.exe" \
-     -H "Authorization: Bearer <ACCESS_TOKEN>" \
-     https://mcp.deepbits.com/workspace/upload
-   ```
-3. **Remote Analysis**: The file will be saved to `/sandbox/[filename]` on the remote server
-4. **Use Ghidra Tools**: Access various Ghidra MCP tools for deep binary analysis:
-   - Decompilation
-   - Function analysis
-   - String extraction
-   - Import/export analysis
-   - Control flow graphing
+**Use Ghidra Tools**: Access various Ghidra MCP tools for deep binary analysis:
+  - Decompilation
+  - Function analysis
+  - String extraction
+  - Import/export analysis
+  - Control flow graphing
 
 ### 5. Threat Reporting
 - Provide clear, actionable security reports
