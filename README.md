@@ -66,8 +66,12 @@ The **Cyber Security Analyst** agent provides expert-level security analysis wit
    ```bash
    npx -y @drbinary/claude-mcp-server
    ```
-   **Note:** The MCP server must be running before you start Claude Code. Keep this terminal open.
-3. Run claude code (in a new terminal)
+   **Note:** The MCP server must be running before you start Claude Code. Keep this terminal open. This command can be executed from any folder.
+3. Run claude code (in a new terminal):
+   ```bash
+   claude
+   ```
+   **Note:** The `claude` command can be executed from any folder.
 4. Add marketplace:
    ```
    /plugin marketplace add DeepBitsTechnology/claude-plugins
