@@ -1,13 +1,13 @@
 {
   "name": "drbinary-chat-plugin",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Local cyber security assistant for PC issue detection, malware analysis, and system scanning",
   "author": {
     "name": "Deepbits Technology Inc.",
     "email": "support@deepbits.com",
     "url": "https://deepbits.com"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "keywords": [
     "security",
     "malware-analysis",

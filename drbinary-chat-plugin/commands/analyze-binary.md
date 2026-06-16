@@ -1,47 +1,58 @@
 ---
 name: analyze-binary
-description: Upload and analyze a suspicious binary file using remote Ghidra tools
+description: Upload and analyze a suspicious binary file using the remote Dr. Binary MCP tools
 ---
 
 # Binary File Analysis
 
-Analyze a suspicious binary file using the remote MCP server's Ghidra analysis tools.
+Analyze a suspicious binary file using the remote Dr. Binary MCP server (Rizin triage, sandboxed deep analysis, and Ghidra decompilation).
 
 ## Usage
 
 Provide the full path to the suspicious file you want to analyze.
 
 ## Analysis Process
-### Step 1: Ghidra Analysis
-Perform:
 
-1. **Basic File Information**
-   - File size and type
-   - PE header analysis
-   - Compilation timestamp
-   - Hash values (MD5, SHA256)
+### Step 1: Upload the file to the remote workspace
 
-2. **Static Analysis**
-   - Decompile key functions
-   - Extract strings
-   - Analyze imports (API calls)
-   - Examine exports
-   - Review sections (.text, .data, .rsrc)
+The remote server cannot read your local filesystem, so the file must be uploaded first:
 
-3. **Behavioral Analysis**
-   - Identify suspicious API calls
-   - Check for network capabilities
-   - Look for file system operations
-   - Registry manipulation functions
-   - Process injection techniques
+1. Call `prepare_upload(file_name="<name to store as>")`. It returns a one-time `curl` command (valid 10 minutes) with an `<ABSOLUTE_LOCAL_PATH>` placeholder.
+2. Run that `curl` yourself with the Bash tool, substituting `<ABSOLUTE_LOCAL_PATH>` with the absolute path to the local file. The bytes upload directly to the server and never pass through the model context.
+3. After a successful upload, refer to the file by its stored filename (the sandbox CWD is the workspace root) in all subsequent tool calls.
 
-4. **Malware Indicators**
-   - Anti-debugging tricks
-   - Code obfuscation
-   - Packing/encryption
-   - Suspicious behavior patterns
+If the link has expired or was already used, call `prepare_upload` again for a fresh one.
 
-### Step 2: Generate Report
+### Step 2: Triage with `inspect_binary`
+
+Call `inspect_binary(filepath="<filename>")` for fast rz-bin triage:
+
+1. **Basic File Information** — file size and type, PE/ELF/Mach-O header, entrypoints
+2. **Imports / Exports** — API calls and exported functions
+3. **Sections** — .text, .data, .rsrc, etc.
+4. **Strings & Symbols** — readable strings and symbol-derived functions
+
+(For hashes like MD5/SHA256, compute them in `run_sandbox`, e.g. `sha256sum <filename>`.)
+
+### Step 3: Deep analysis with `run_sandbox` + Rizin
+
+Use `run_sandbox(command="rizin -qc '<commands>' <filename>")` for focused analysis:
+
+- `aaa; afl` — analyze and list functions
+- `aaa; pdf @ <func>` — decompile/disassemble a specific function
+- `izz` — strings across the whole file; `ii` — imports; `iE` — exports
+
+The sandbox also provides radare2, binwalk, xxd, angr/pwntools/qiling (python3), qemu (`qemu-{arch} -strace ...`), apktool, jadx, and more. `run_sandbox` accepts an optional `timeout` (default 120s, max 600s).
+
+For broad decompilation across all functions, use `dump_data(filepath="<filename>")`, then `list_files` / `read_file` to read the output.
+
+### Step 4: Behavioral & malware indicators
+- Identify suspicious API calls
+- Check for network capabilities
+- Look for file system / registry operations
+- Detect process injection, anti-debugging, packing/encryption
+
+### Step 5: Generate Report
 Provide comprehensive findings with:
 - File metadata
 - Capabilities identified
@@ -80,7 +91,7 @@ Provide comprehensive findings with:
 - Size: [bytes]
 - MD5: [hash]
 - SHA256: [hash]
-- Type: [PE32/PE64/DLL/etc]
+- Type: [PE32/PE64/DLL/ELF/Mach-O/etc]
 
 ### Analysis Summary
 [1-2 paragraph overview]
@@ -118,4 +129,4 @@ Provide comprehensive findings with:
 3. [Prevention measures]
 ```
 
-Begin the analysis with the provided file path.
+Begin the analysis with the provided file path: upload it via `prepare_upload` + `curl`, then triage and dig in.

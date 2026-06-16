@@ -1,5 +1,6 @@
 {
     "name": "deepbits",
+    "description": "Deepbits security plugins for local PC threat detection, malware analysis, and binary reverse engineering",
     "owner": {
         "name": "Deepbits Technology Inc."
     },

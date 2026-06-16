@@ -1,6 +1,6 @@
 # Deepbits Cyber Assistant Plugin for Claude Code
 
-The Plugin equips Claude Code with advanced binary analysis capabilities for tasks such as incident response, malware investigation, and vulnerability assessment. It connects to both cloud-based analysis platforms and local tools via MCP, enabling seamless hybrid workflows. With features including local Windows system scanning, browser hijacking detection, registry and network monitoring, suspicious file analysis, and remote binary analysis through tools like Ghidra, Qilin, and angr, the plugin transforms Claude Code into a powerful AI-assisted workspace for comprehensive system and binary security analysis.
+The Plugin equips Claude Code with advanced binary analysis capabilities for tasks such as incident response, malware investigation, and vulnerability assessment. It connects to the remote Dr. Binary MCP server over HTTP — no local server to install — and combines that with local system tools. To analyze a local file, Claude calls `prepare_upload` to obtain a one-time `curl` command, runs it to stream the file into a remote workspace, and then analyzes it with `inspect_binary` (Rizin triage), `run_sandbox` (`rizin -qc` and a full reverse-engineering toolkit), and `dump_data` (Ghidra decompilation). The plugin also exposes an Android/AOSP kernel CVE database for vulnerability research. Together with local Windows system scanning, browser hijacking detection, and registry/network monitoring, it transforms Claude Code into a powerful AI-assisted workspace for comprehensive system and binary security analysis.
 
 ## Overview
 
@@ -14,7 +14,7 @@ Designed for incident response, malware forensics, and vulnerability research, t
 
 - 🦠 Analyze malware samples to uncover behaviors, persistence methods, and payloads.
 
-- 🛡️ Perform vulnerability and exploit analysis, including binary diffing, patch validation, and code comparison.
+- 🛡️ Perform vulnerability and exploit analysis, including Android/AOSP kernel CVE research and patch-status assessment.
 
 - ⚙️ Combine cloud automation with local expertise, integrating Deepbits’ agentic binary-analysis capabilities into Claude Code.
 
@@ -32,7 +32,7 @@ This plugin provides Claude Code with specialized cybersecurity features, includ
 
 - 🔗 Network connection monitoring for unusual or unauthorized communications.
 
-- 🧠 Remote binary file analysis powered by Ghidra, Qilin, angr, and other advanced analysis frameworks.
+- 🧠 Remote binary file analysis powered by Rizin/radare2, Ghidra, angr, qiling, and other advanced analysis frameworks.
 
 Together, these capabilities transform Claude Code into a comprehensive cybersecurity co-pilot—bridging the gap between code intelligence, system defense, and binary analysis.
 
@@ -46,11 +46,16 @@ Together, these capabilities transform Claude Code into a comprehensive cybersec
 - Active network connection monitoring
 
 ### 🔍 Binary Analysis
-- Upload suspicious files to remote sandbox
-- Advanced static and dynamic analysis
-- Malware classification and threat assessment
-- Indicator of Compromise (IoC) extraction
-- Detailed decompilation and code analysis
+- Upload local files to the remote workspace via a one-time `curl` (bytes never pass through the model context)
+- Lightweight Rizin (rz-bin) triage with `inspect_binary`
+- Deep, sandboxed analysis with `run_sandbox` + `rizin -qc` and a full RE toolkit (radare2, binwalk, angr, qiling, qemu, apktool, jadx, …)
+- Full Ghidra decompilation with `dump_data`
+- Malware classification, threat assessment, and IoC extraction
+
+### 🧬 Android Kernel CVE Research
+- Look up individual CVEs and their affected version ranges, fixes, and bug-inducing commits
+- Find CVEs by AOSP kernel version, build date, or branch
+- Identify unpatched and exploitable vulnerabilities for a branch at a point in time
 
 ### 🤖 Specialized Agent
 The **Cyber Security Analyst** agent provides expert-level security analysis with:
@@ -61,52 +66,37 @@ The **Cyber Security Analyst** agent provides expert-level security analysis wit
 
 ## Installation
 
-1. Clone or download this plugin to your local machine
-2. **Start the MCP server** (required before running Claude Code):
-   ```bash
-   npx -y @drbinary/claude-mcp-server
-   ```
-   **Note:** The MCP server must be running before you start Claude Code. Keep this terminal open. This command can be executed from any folder.
-3. Run claude code (in a new terminal):
+The plugin connects directly to the remote Dr. Binary MCP server (`https://mcp.deepbits.com/mcp`) over HTTP — **there is no local MCP server to install or run.**
+
+1. Run Claude Code:
    ```bash
    claude
    ```
-   **Note:** The `claude` command can be executed from any folder.
-4. Add marketplace:
+2. Add the marketplace:
    ```
    /plugin marketplace add DeepBitsTechnology/claude-plugins
    ```
-5. Install the plugin:
+3. Install the plugin:
    ```
-   /plugin install drbinary-chat-plugin@DeepBitsTechnology
+   /plugin install drbinary-chat-plugin@deepbits
    ```
-6. Connect MCP server:
+4. Connect and authenticate:
    ```
    /mcp
    ```
+   Connecting to the `drbinary` server opens a browser-based sign-in. Log in with **Google or GitHub SSO** — no manual account creation is required. Once authenticated, the binary-analysis and kernel-CVE tools are available.
 
 ### Important Configuration
 
-#### MCP Server Startup
-
-**The MCP server will NOT start automatically.** You must manually run the following command before starting Claude Code:
-
-```bash
-npx -y @drbinary/claude-mcp-server
-```
-
-Keep this terminal open while using the plugin, as Claude Code requires the MCP server to be running for binary analysis features.
-
 #### MCP Timeout Setting
 
-Binary analysis using disassemblers like Ghidra can take a significant amount of time to complete, especially for large or complex binaries. If you encounter MCP timeout issues during analysis, you should increase the `MCP_TOOL_TIMEOUT` environment variable.
+Some remote analysis steps — sandboxed Rizin runs, `dump_data` (Ghidra) decompilation of large or complex binaries — can take several minutes. If you hit MCP timeouts during deep analysis, increase Claude Code's `MCP_TOOL_TIMEOUT`:
 
-**Recommended setting:**
 ```bash
 export MCP_TOOL_TIMEOUT=600000
 ```
 
-This sets the timeout to 600,000 milliseconds (10 minutes), which provides sufficient time for the disassembler to analyze binary files thoroughly. You can adjust this value based on your needs, but it's recommended to use a larger value to avoid interruptions during deep analysis.
+This sets the timeout to 600,000 milliseconds (10 minutes), giving long-running analysis enough time to complete. Note that the `run_sandbox` tool also has its own `timeout` parameter (default 120s, maximum 600s); both layers apply, so size each to your workload.
 
 ## Plugin Structure
 
@@ -118,12 +108,15 @@ drbinary-chat-plugin/
 ├── agents/
 │   └── cyber-security-analyst.md    # Specialized security analyst agent
 ├── skills/
-│   └── binary-analysis/
-│       └── SKILL.md          # Binary analysis skill (with YAML frontmatter)
+│   ├── binary-analysis/
+│   │   └── SKILL.md          # Binary analysis skill (with YAML frontmatter)
+│   └── kernel-cve-analysis/
+│       └── SKILL.md          # Android/AOSP kernel CVE skill
 ├── commands/
 │   ├── scan-system.md
 │   ├── scan-registry.md
 │   ├── analyze-binary.md
+│   ├── find-cves.md
 │   ├── check-browser-hijack.md
 │   ├── scan-suspicious-files.md
 │   └── check-network.md
@@ -164,10 +157,16 @@ Deep scan of Windows Registry for:
 
 ### `/analyze-binary <file-path>`
 Upload and analyze a suspicious binary file:
-1. Obtains access token from MCP server
-2. Uploads file to remote sandbox
-3. Performs Ghidra static analysis
-4. Generates comprehensive threat report
+1. Calls `prepare_upload` and runs the returned one-time `curl` to stream the file into the remote workspace
+2. Triages the file with `inspect_binary` (Rizin)
+3. Digs deeper with `run_sandbox` + `rizin -qc`, and `dump_data` for full decompilation when needed
+4. Generates a comprehensive threat report
+
+### `/find-cves <query>`
+Query the Android/AOSP kernel CVE database. Routes your request to the right tool:
+- Look up a specific CVE (`CVE-2024-12345`)
+- Find CVEs by kernel version, build date, or branch
+- Find unpatched or exploitable CVEs for a branch at a point in time
 
 ### `/check-browser-hijack`
 Detect browser hijacking across all installed browsers:
@@ -222,8 +221,9 @@ When you need to analyze a suspicious file:
    ```
 
 2. **The plugin will:**
-   - Perform Ghidra analysis (decompilation, string extraction, etc.)
-   - Generate comprehensive threat report
+   - Upload the file via `prepare_upload` + `curl` into the remote workspace
+   - Triage with `inspect_binary`, then run targeted `rizin -qc` analysis in `run_sandbox` (and `dump_data` for full decompilation when needed)
+   - Generate a comprehensive threat report
 
 3. **Analysis includes:**
    - File metadata and hashes
@@ -250,9 +250,16 @@ The plugin connects to the Deepbits MCP server for remote analysis:
 ```
 
 ### Available MCP Tools
-- Ghidra analysis tools (via remote sandbox)
-- Binary decompilation services
-- Malware analysis capabilities
+
+**Binary analysis**
+- `prepare_upload` — mint a one-time `curl` command to upload a local file into the workspace
+- `inspect_binary` — lightweight rz-bin triage (entrypoints, sections, imports/exports, symbols, strings)
+- `run_sandbox` — run `rizin -qc` and a full RE toolkit (radare2, binwalk, angr, qiling, qemu, apktool, jadx, …)
+- `dump_data` — full Ghidra decompilation/disassembly dump
+- `list_files` / `read_file` — browse and read workspace artifacts
+
+**Android kernel CVE database**
+- `get_cve_info`, `query_cves_by_version`, `query_cves_by_date`, `query_cves_by_branch`, `find_exploitable_cves`, `list_all_cves`
 
 ## Security Considerations
 
@@ -264,8 +271,9 @@ The plugin connects to the Deepbits MCP server for remote analysis:
 
 ### Privacy
 - Local scans only access data on your system
-- Binary uploads are securely transmitted via HTTPS
-- Access tokens are temporary and session-based
+- Binary uploads are securely transmitted via HTTPS, using a single-use upload link valid for 10 minutes
+- File bytes are streamed directly to the server via `curl` and never pass through the model context
+- Authentication uses Google/GitHub SSO via the remote MCP server
 
 ### Permissions Required
 - **Local**: Read access to file system, registry (via PowerShell)
@@ -326,7 +334,7 @@ For support and questions:
 
 ## License
 
-MIT License - See LICENSE file for details
+Apache License 2.0 - See LICENSE file for details
 
 ---
 
