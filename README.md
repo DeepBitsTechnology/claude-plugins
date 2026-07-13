@@ -47,6 +47,7 @@ Together, these capabilities transform Claude Code into a comprehensive cybersec
 
 ### 🔍 Binary Analysis
 - Upload local files to the remote workspace via a one-time `curl` (bytes never pass through the model context)
+- Compare binaries with DeepDiff through the remote Dr. Binary MCP server
 - Lightweight Rizin (rz-bin) triage with `inspect_binary`
 - Deep, sandboxed analysis with `run_sandbox` + `rizin -qc` and a full RE toolkit (radare2, binwalk, angr, qiling, qemu, apktool, jadx, …)
 - Full Ghidra decompilation with `dump_data`
@@ -233,6 +234,10 @@ When you need to analyze a suspicious file:
    - Behavioral indicators
    - Malware classification
    - Remediation recommendations
+
+## DeepDiff Benchmark
+
+The remote Dr. Binary MCP server provides DeepDiff for matching related functions across binaries. See [Benchmarking DeepDiff Against BinDiff on Stripped and Cross-Compiler Binaries](https://drbinary.ai/blog/DeepDiffVsBinDiffBenchmark) for a comparison of DeepDiff and Google BinDiff across 21 binary pairs.
 
 ## MCP Server Integration
 
